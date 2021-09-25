@@ -29,7 +29,7 @@ module.exports = (db) => {
       logger.error(
         'Start latitude and longitude must be between -90 - 90 and -180 to 180 degrees respectively'
       );
-      return res.send({
+      return res.status(400).send({
         error_code: 'VALIDATION_ERROR',
         message:
           'Start latitude and longitude must be between -90 - 90 and -180 to 180 degrees respectively',
@@ -45,7 +45,7 @@ module.exports = (db) => {
       logger.error(
         'Start latitude and longitude must be between -90 - 90 and -180 to 180 degrees respectively'
       );
-      return res.send({
+      return res.status(400).send({
         error_code: 'VALIDATION_ERROR',
         message:
           'End latitude and longitude must be between -90 - 90 and -180 to 180 degrees respectively',
@@ -55,7 +55,7 @@ module.exports = (db) => {
     if (typeof riderName !== 'string' || riderName.length < 1) {
       logger.error('Rider name must be a non empty string');
 
-      return res.send({
+      return res.status(400).send({
         error_code: 'VALIDATION_ERROR',
         message: 'Rider name must be a non empty string',
       });
@@ -64,7 +64,7 @@ module.exports = (db) => {
     if (typeof driverName !== 'string' || driverName.length < 1) {
       logger.error('Driver name must be a non empty string');
 
-      return res.send({
+      return res.status(400).send({
         error_code: 'VALIDATION_ERROR',
         message: 'Rider name must be a non empty string',
       });
@@ -73,7 +73,7 @@ module.exports = (db) => {
     if (typeof driverVehicle !== 'string' || driverVehicle.length < 1) {
       logger.error('Vehicle name must be a non empty string');
 
-      return res.send({
+      return res.status(400).send({
         error_code: 'VALIDATION_ERROR',
         message: 'Rider name must be a non empty string',
       });
@@ -96,7 +96,7 @@ module.exports = (db) => {
         if (err) {
           logger.error(`Could not insert ride into DB. Details:${err}`);
 
-          console.log(err);
+          console.status(500).log(err);
           return res.send({
             error_code: 'SERVER_ERROR',
             message: 'Unknown error',
@@ -111,7 +111,7 @@ module.exports = (db) => {
               logger.error(
                 `Error when getting ride with id:${this.lastID}. Details:${err}`
               );
-              return res.send({
+              return res.status(500).send({
                 error_code: 'SERVER_ERROR',
                 message: 'Unknown error',
               });
@@ -129,7 +129,7 @@ module.exports = (db) => {
       if (err) {
         logger.error(`Error when getting rides from DB. Details:${err}`);
 
-        return res.send({
+        return res.status(500).send({
           error_code: 'SERVER_ERROR',
           message: 'Unknown error',
         });
@@ -138,7 +138,7 @@ module.exports = (db) => {
       if (rows.length === 0) {
         logger.error(`No ride with id:${req.params.id} found in the DB`);
 
-        return res.send({
+        return res.status(404).send({
           error_code: 'RIDES_NOT_FOUND_ERROR',
           message: 'Could not find any rides',
         });
@@ -156,7 +156,7 @@ module.exports = (db) => {
           logger.error(
             `Error when getting ride with id${req.params.id} from DB. Details:${err}`
           );
-          return res.send({
+          return res.status(500).send({
             error_code: 'SERVER_ERROR',
             message: 'Unknown error',
           });
@@ -165,7 +165,7 @@ module.exports = (db) => {
         if (rows.length === 0) {
           logger.error(`No ride with id:${req.params.id} found in the DB`);
 
-          return res.send({
+          return res.status(404).send({
             error_code: 'RIDES_NOT_FOUND_ERROR',
             message: 'Could not find any rides',
           });
