@@ -7,9 +7,13 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "mocha tests",
+    "test": "nyc mocha tests",
     "start": "node index.js",
     "start:dev": "nodemon index.js"
+  },
+  "pre-push": {
+    "colors": true,
+    "run":"test"
   },
   "keywords": [
     "backend"
@@ -21,10 +25,14 @@
     "express": "^4.16.4",
     "sqlite3": "^4.0.6",
     "swagger-jsdoc": "^6.1.0",
-    "swagger-ui-express": "^4.1.6"
+    "swagger-ui-express": "^4.1.6",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
+    "eslint": "^7.32.0",
     "mocha": "^6.1.4",
+    "nyc": "^15.1.0",
+    "pre-push": "^0.1.1",
     "supertest": "^4.0.2"
   }
 }
