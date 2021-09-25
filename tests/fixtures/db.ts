@@ -1,4 +1,4 @@
-const rideOne = {
+export const rideOne = {
   driverName: 'Andrew',
   riderName: 'Bob',
   driverVehicle: 'Andrew',
@@ -7,7 +7,7 @@ const rideOne = {
   endLat: '46.66',
   endLong: '46.66',
 };
-let deleteRides = (db) => {
+export const deleteRides = (db) => {
   const clearRidesTable = `
         DELETE from rides;
     `;
@@ -16,4 +16,3 @@ let deleteRides = (db) => {
 
   return db;
 };
-module.exports = { rideOne, deleteRides };

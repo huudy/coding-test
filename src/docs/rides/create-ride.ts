@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   post: {
     tags: ['Create ride operations'],
     description: 'Create ride',
