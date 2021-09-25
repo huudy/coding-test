@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 
 const jsonParser = bodyParser.json();
 
-const logger = require('./utils/logger');
+import logger from './utils/logger';
 
 module.exports = (db) => {
   app.get('/health', (req, res) => res.send('Healthy'));
@@ -92,12 +92,10 @@ module.exports = (db) => {
     const result = db.run(
       'INSERT INTO Rides(startLat, startLong, endLat, endLong, riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?)',
       values,
-      function (err) {
+      function (this: any, err) {
         if (err) {
           logger.error(`Could not insert ride into DB. Details:${err}`);
-
-          console.status(500).log(err);
-          return res.send({
+          return res.status(500).send({
             error_code: 'SERVER_ERROR',
             message: 'Unknown error',
           });
@@ -106,7 +104,7 @@ module.exports = (db) => {
         db.all(
           'SELECT * FROM Rides WHERE rideID = ?',
           this.lastID,
-          function (err, rows) {
+          function (this: any, err, rows) {
             if (err) {
               logger.error(
                 `Error when getting ride with id:${this.lastID}. Details:${err}`

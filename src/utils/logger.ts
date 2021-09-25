@@ -1,6 +1,6 @@
 const { createLogger, format, transports } = require('winston');
 
-module.exports = createLogger({
+export default createLogger({
   transports: [
     new transports.File({
       filename: 'logs/server.log',

@@ -1,12 +1,10 @@
-'use strict';
-
 const request = require('supertest');
 
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database(':memory:');
 
 const app = require('../src/app')(db);
-const buildSchemas = require('../src/schemas');
+import { buildSchemas } from '../src/schemas';
 const { rideOne, deleteRides } = require('./fixtures/db');
 describe('API tests', () => {
   before((done) => {
@@ -69,13 +67,14 @@ describe('API tests', () => {
       request(app).get('/rides').expect(200, done);
     });
     describe('when no records in the Rides table', () => {
-      before(() => {
+      before((done) => {
         db.serialize((err) => {
           if (err) {
             return done(err);
           }
 
           deleteRides(db);
+          done();
         });
       });
       it('should return 404', (done) => {

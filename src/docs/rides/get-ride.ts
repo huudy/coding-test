@@ -1,22 +1,32 @@
-module.exports = {
+export default {
   get: {
     tags: ['Get ride operations'],
     description: 'Get rides',
     operationId: 'getRides',
-    parameters: [],
+    parameters: [
+      {
+        name: 'id',
+        in: 'path',
+        schema: {
+          $ref: '#/components/schemas/id',
+        },
+        required: true,
+        description: 'A single ride id',
+      },
+    ],
     responses: {
       200: {
-        description: 'Succesful message',
+        description: 'Successful message',
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/ArrayOfRides',
+              $ref: '#/components/schemas/Ride',
             },
           },
         },
       },
       404: {
-        description: 'Not found error',
+        description: 'Not found error message',
         content: {
           'application/json': {
             schema: {

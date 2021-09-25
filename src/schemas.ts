@@ -1,4 +1,4 @@
-module.exports = (db) => {
+export const buildSchemas = (db: any) => {
   const createRideTableSchema = `
         CREATE TABLE Rides
         (
