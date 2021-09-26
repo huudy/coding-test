@@ -8,10 +8,10 @@ const jsonParser = bodyParser.json();
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database(':memory:');
 
-import { buildSchemas } from './src/schemas';
+import { buildSchemas } from './schemas';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-import docs from './src/docs';
+import docs from './docs';
 const specs = swaggerJsdoc(docs);
 
 db.serialize(() => {
