@@ -8,8 +8,8 @@
   },
   "scripts": {
     "test": "nyc mocha -r ts-node/register 'tests/**/*.ts'",
-    "start": "tsc && node build/index.js",
-    "start:dev": "nodemon index.ts",
+    "start": "tsc && node build/src/index.js",
+    "dev": "nodemon src/index.ts",
     "build": "tsc"
   },
   "pre-push": {

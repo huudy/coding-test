@@ -1,19 +1,23 @@
-const request = require('supertest');
+import request from 'supertest';
 
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database(':memory:');
 
-const app = require('../src/app')(db);
-import { buildSchemas } from '../src/schemas';
-const { rideOne, deleteRides } = require('./fixtures/db');
+import app from '../src/app';
+import {
+  rideOne,
+  deleteRides,
+  buildSchemas,
+  dropRidesTable,
+} from './fixtures/db';
 describe('API tests', () => {
   before((done) => {
-    db.serialize((err) => {
+    db.serialize((err: any) => {
       if (err) {
         return done(err);
       }
 
-      buildSchemas(db);
+      buildSchemas();
 
       done();
     });
@@ -32,6 +36,7 @@ describe('API tests', () => {
     });
     it('should return bad request error when starting lat out of range', (done) => {
       let rideWrongStartLat = { ...rideOne, startLat: 190.0 };
+
       request(app).post('/rides').send(rideWrongStartLat).expect(400, done);
     });
     it('should return bad request error when starting long out of range', (done) => {
@@ -46,6 +51,7 @@ describe('API tests', () => {
     });
     it('should return bad request error when end latitude out of range', (done) => {
       let rideWrongEndLat = { ...rideOne, endLat: 190.0 };
+
       request(app).post('/rides').send(rideWrongEndLat).expect(400, done);
     });
   });
@@ -72,19 +78,39 @@ describe('API tests', () => {
     it('should return 400 if rides limit query param is wrong', (done) => {
       request(app).get('/rides?page=1&limit=ww').expect(400, done);
     });
+    it('should return 404 if requested page does not exist', (done) => {
+      request(app).get('/rides?page=3&limit=10').expect(404, done);
+    });
     describe('when no records in the Rides table', () => {
       before((done) => {
         db.serialize((err: any) => {
           if (err) {
             return done(err);
           }
-
-          deleteRides(db);
+          deleteRides();
           done();
         });
       });
       it('should return 404', (done) => {
         request(app).get('/rides?page=1&limit=10').expect(404, done);
+      });
+    });
+    describe('when Rides table not there', () => {
+      before((done) => {
+        db.serialize((err: any) => {
+          if (err) {
+            return done(err);
+          }
+          dropRidesTable();
+          done();
+        });
+      });
+      it('and trying to get paginated result should return 500', (done) => {
+        request(app).get('/rides?page=1&limit=10').expect(500, done);
+      });
+
+      it('and trying to get single record should return 500', (done) => {
+        request(app).get('/rides/1').expect(500, done);
       });
     });
   });
