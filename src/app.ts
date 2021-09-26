@@ -6,7 +6,9 @@ const bodyParser = require('body-parser');
 
 const jsonParser = bodyParser.json();
 
+import { pagination } from './middlewares/pagination';
 import logger from './utils/logger';
+import { getRideParamsValid, validate } from './utils/validator';
 
 module.exports = (db) => {
   app.get('/health', (req, res) => res.send('Healthy'));
@@ -122,28 +124,47 @@ module.exports = (db) => {
     );
   });
 
-  app.get('/rides', (req, res) => {
-    db.all('SELECT * FROM Rides', (err, rows) => {
-      if (err) {
-        logger.error(`Error when getting rides from DB. Details:${err}`);
-
-        return res.status(500).send({
-          error_code: 'SERVER_ERROR',
-          message: 'Unknown error',
+  app.get('/rides', getRideParamsValid(), validate, pagination, (req, res) => {
+    const { limit, page, skip } = req.body;
+    db.all(
+      'SELECT count(*) as totalCount FROM Rides',
+      function (err: any, result: any) {
+        if (err) {
+          logger.error(`Error when getting rides from DB. Details:${err}`);
+          return res.send({
+            error_code: 'SERVER_ERROR',
+            message: 'Unknown error',
+          });
+        }
+        const { totalCount } = result[0];
+        if (totalCount == 0) {
+          logger.error(`No rides found in the DB`);
+          return res.status(404).send({
+            error_code: 'RIDES_NOT_FOUND_ERROR',
+            message: 'Could not find any rides',
+          });
+        }
+        const totalPages = Math.ceil(totalCount / limit);
+        if (totalPages < page) {
+          return res.status(404).send({
+            error_code: 'RIDES_NOT_FOUND_ERROR',
+            message: `Page ${page} does not exist`,
+          });
+        }
+        const values = [limit, skip];
+        const query =
+          'Select * from Rides ORDER BY created DESC limit ? OFFSET ?';
+        db.all(query, values, function (err: any, data: any) {
+          const result = {
+            page,
+            totalPages,
+            totalCount,
+            data,
+          };
+          res.send(result);
         });
       }
-
-      if (rows.length === 0) {
-        logger.error(`No ride with id:${req.params.id} found in the DB`);
-
-        return res.status(404).send({
-          error_code: 'RIDES_NOT_FOUND_ERROR',
-          message: 'Could not find any rides',
-        });
-      }
-
-      res.send(rows);
-    });
+    );
   });
 
   app.get('/rides/:id', (req, res) => {

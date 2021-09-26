@@ -64,11 +64,17 @@ describe('API tests', () => {
   });
   describe('GET /rides', () => {
     it('should return 200 if rides present in the DB', (done) => {
-      request(app).get('/rides').expect(200, done);
+      request(app).get('/rides?page=1&limit=10').expect(200, done);
+    });
+    it('should return 400 if rides page query param is wrong', (done) => {
+      request(app).get('/rides?page=zz&limit=10').expect(400, done);
+    });
+    it('should return 400 if rides limit query param is wrong', (done) => {
+      request(app).get('/rides?page=1&limit=ww').expect(400, done);
     });
     describe('when no records in the Rides table', () => {
       before((done) => {
-        db.serialize((err) => {
+        db.serialize((err: any) => {
           if (err) {
             return done(err);
           }
@@ -78,7 +84,7 @@ describe('API tests', () => {
         });
       });
       it('should return 404', (done) => {
-        request(app).get('/rides').expect(404, done);
+        request(app).get('/rides?page=1&limit=10').expect(404, done);
       });
     });
   });
