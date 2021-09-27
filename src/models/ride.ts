@@ -1,4 +1,4 @@
-export default class {
+export class RideModel {
   constructor(
     driverName: string,
     riderName: string,

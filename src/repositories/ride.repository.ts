@@ -1,19 +1,19 @@
 import dao from '../db/dao';
-import Ride from '../models/ride';
+import { RideModel } from '../models/ride';
 
-type PaginatedRides = {
+export type PaginatedRides = {
   page: number;
-  data: Ride[];
+  data: RideModel[];
   totalCount: number;
 };
 
-export default class {
-  static async getRidesTotalCount(): Promise<number> {
+export class RideRepository {
+  async getRidesTotalCount(): Promise<number> {
     const result = await dao.getCount(['rides']);
     return Number(result);
   }
 
-  static async getPaginatedRides({ limit, skip }): Promise<PaginatedRides> {
+  async getPaginatedRides({ limit, skip }): Promise<PaginatedRides> {
     const rides = await dao.all(
       'SELECT * FROM rides ORDER BY created DESC limit ? OFFSET ?',
       [limit, skip]
@@ -21,17 +21,17 @@ export default class {
     return <PaginatedRides>rides;
   }
 
-  static async getRideById(id: number): Promise<Ride> {
+  async getRideById(id: number): Promise<RideModel> {
     const ride = await dao.get('SELECT * FROM rides WHERE rideID = ?', [id]);
-    return <Ride>ride;
+    return <RideModel>ride;
   }
 
-  static async clearTable(): Promise<Ride> {
+  async clearTable(): Promise<RideModel> {
     const ride = await dao.run('DELETE from rides ', []);
-    return <Ride>ride;
+    return <RideModel>ride;
   }
 
-  static async dropTable(): Promise<boolean> {
+  async dropTable(): Promise<boolean> {
     try {
       await dao.run('DROP table Rides ', []);
       return true;
@@ -40,7 +40,7 @@ export default class {
     }
   }
 
-  static async createTable(): Promise<boolean> {
+  async createTable(): Promise<boolean> {
     try {
       await dao.run(
         `CREATE TABLE Rides
@@ -63,7 +63,7 @@ export default class {
     }
   }
 
-  static async insertRide(ride: Ride): Promise<boolean> {
+  async insertRide(ride: RideModel): Promise<boolean> {
     const stmt =
       'INSERT INTO Rides (startLat, startLong, endLat, endLong, riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?)';
     try {

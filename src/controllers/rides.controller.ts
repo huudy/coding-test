@@ -1,13 +1,18 @@
-import ridesRepo from '../repositories/ride.repository';
 import { Request, Response } from 'express';
-import Ride from '../models/ride';
+import { RideModel } from '../models/ride';
+import { RideService } from '../services/ride.service';
 import logger from '../utils/logger';
 
-export default class {
-  static async getPaginatedRides(req: Request, res: Response, next: Function) {
+export class RideController {
+  public rideService: RideService;
+  constructor(rideSvc) {
+    this.rideService = rideSvc;
+  }
+
+  getPaginatedRides = async (req: Request, res: Response, next: Function) => {
     try {
       const { page, limit } = req.body;
-      const totalCount = await ridesRepo.getRidesTotalCount();
+      const totalCount = await this.rideService.getTotalCount();
       if (totalCount <= 0) {
         logger.error('No rides found in the DB');
         return res.status(404).send({
@@ -24,18 +29,18 @@ export default class {
           message: `Page ${page} does not exist`,
         });
       }
-      let data = await ridesRepo.getPaginatedRides(req.body);
+      let data = await this.rideService.getPaginatedRides(req.body);
       return res.send({ page, totalCount, totalPages, data });
     } catch (error) {
       logger.error(`Something went wrong. Details ${error}`);
       return res.status(500).send(error);
     }
-  }
+  };
 
-  static async getRideById(req: Request, res: Response, next: Function) {
+  getRideById = async (req: Request, res: Response, next: Function) => {
     try {
       const { id } = req.params;
-      let ride = await ridesRepo.getRideById(Number(id));
+      let ride = await this.rideService.getRideById(Number(id));
       if (!ride) {
         logger.error(`Could not find ride with id ${id}`);
         return res.status(404).send(`Could not find ride with id ${id}`);
@@ -45,9 +50,9 @@ export default class {
       logger.error(`Something went wrong. Details ${error}`);
       return res.status(500).send(error);
     }
-  }
+  };
 
-  static async createRide(req: Request, res: Response, next: Function) {
+  createRide = async (req: Request, res: Response, next: Function) => {
     try {
       const {
         driverName,
@@ -58,7 +63,7 @@ export default class {
         endLat,
         endLong,
       } = req.body;
-      const newRide = new Ride(
+      const newRide = new RideModel(
         driverName,
         riderName,
         driverVehicle,
@@ -67,11 +72,11 @@ export default class {
         endLat,
         endLong
       );
-      await ridesRepo.insertRide(newRide);
+      await this.rideService.createRide(newRide);
       return res.send(newRide);
     } catch (error) {
       logger.error(`Something went wrong. Details ${error}`);
-      return res.status(500).send(error);
+      return res.send(error);
     }
-  }
+  };
 }
