@@ -1,3 +1,4 @@
+import { RideRepository } from './../../src/repositories/ride.repository';
 export const rideOne = {
   driverName: 'Andrew',
   riderName: 'Bob',
@@ -7,12 +8,23 @@ export const rideOne = {
   endLat: '46.66',
   endLong: '46.66',
 };
-export const deleteRides = (db) => {
-  const clearRidesTable = `
-        DELETE from rides;
-    `;
+export const rideNoDriver = {
+  riderName: 'Bob',
+  driverVehicle: 'Andrew',
+  startLat: '43.66',
+  startLong: '43.66',
+  endLat: '46.66',
+  endLong: '46.66',
+};
+const rideRepo = new RideRepository();
+export const deleteRides = () => {
+  rideRepo.clearTable();
+};
 
-  db.run(clearRidesTable);
+export const buildSchemas = () => {
+  rideRepo.createTable();
+};
 
-  return db;
+export const dropRidesTable = () => {
+  rideRepo.dropTable();
 };
