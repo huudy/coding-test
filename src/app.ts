@@ -4,6 +4,7 @@ import swaggerUi from 'swagger-ui-express';
 import docs from './docs';
 import ridesRoutes from './routes/ride.routes';
 import healthRoutes from './routes/health.routes';
+import helmet from 'helmet';
 
 const specs = swaggerJsdoc(docs);
 const app = express();
@@ -12,6 +13,7 @@ import dao from './db/dao';
 dao.buildSchemas();
 
 app.use(express.json());
+app.use(helmet());
 
 app.use('/rides', ridesRoutes);
 app.use('/health', healthRoutes);

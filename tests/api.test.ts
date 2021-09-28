@@ -54,6 +54,18 @@ describe('API tests', () => {
 
       await request(app).post('/rides').send(rideWrongEndLat).expect(400);
     });
+    it('should escape string causing potential SQL injection and create new ride with driver name "DROP TABLE Rides; --"', async () => {
+      let rideSQLInjectionDrop = {
+        ...rideOne,
+        driverName: 'DROP TABLE Rides; --',
+      };
+      console.log(rideSQLInjectionDrop);
+
+      let res = await request(app)
+        .post('/rides')
+        .send(rideSQLInjectionDrop)
+        .expect(200);
+    });
   });
   describe('GET /health', () => {
     it('should return health', async () => {
