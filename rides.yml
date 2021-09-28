@@ -1,0 +1,58 @@
+config:
+  target: 'http://localhost:8010'
+  phases:
+    - duration: 30
+      arrivalRate: 100
+  ensure:
+    p99: 50
+  variables:
+    driverName:
+      - 'Jan'
+      - 'Hans'
+      - 'Pablo'
+    riderName:
+      - 'Pablo'
+      - 'JFK'
+      - 'Hans'
+    driverVehicle:
+      - 'Toyota Yaris'
+      - 'Toytoa Corolla'
+      - 'Fiat 126p'
+    startLong:
+      - '80.4'
+      - '70.3'
+      - '21.2'
+    startLat:
+      - '2.3'
+      - '10.98'
+      - '70.1'
+    endLong:
+      - '70.3'
+      - '40.3'
+      - '32.3'
+    endLat:
+      - '54.3'
+      - '65.3'
+      - '-1.3'
+
+scenarios:
+  - name: 'Create rides'
+    flow:
+      - post:
+          url: '/rides'
+          json:
+            driverName: '{{ driverName }}'
+            riderName: '{{ riderName }}'
+            driverVehicle: '{{ driverVehicle }}'
+            startLong: '{{ startLong }}'
+            startLat: '{{ startLat }}'
+            endLong: '{{ endLong }}'
+            endLat: '{{ endLat }}'
+  - name: 'Get ride by ID'
+    flow:
+      - get:
+          url: '/rides/1'
+  - name: 'Get first page of rides'
+    flow:
+      - get:
+          url: '/rides?page=1&limit=5'
