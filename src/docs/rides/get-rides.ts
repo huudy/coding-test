@@ -3,14 +3,33 @@ export default {
     tags: ['Get ride operations'],
     description: 'Get rides',
     operationId: 'getRides',
-    parameters: [],
+    parameters: [
+      {
+        name: 'page',
+        in: 'query',
+        schema: {
+          $ref: '#/components/schemas/page',
+        },
+        required: true,
+        description: 'A page number of the rides',
+      },
+      {
+        name: 'limit',
+        in: 'query',
+        schema: {
+          $ref: '#/components/schemas/limit',
+        },
+        required: true,
+        description: 'A maximum value of rides to be retrieved by page',
+      },
+    ],
     responses: {
       200: {
         description: 'Succesful message',
         content: {
           'application/json': {
             schema: {
-              $ref: '#/components/schemas/ArrayOfRides',
+              $ref: '#/components/schemas/PaginatedRides',
             },
           },
         },
