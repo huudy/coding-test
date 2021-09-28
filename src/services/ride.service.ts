@@ -9,13 +9,13 @@ export class RideService {
   constructor(rideRepository) {
     this.rideRepo = rideRepository;
   }
-  getPaginatedRides(body: any): Promise<PaginatedRides> {
+  async getPaginatedRides(body: any): Promise<PaginatedRides> {
     return this.rideRepo.getPaginatedRides(body);
   }
-  getTotalCount(): Promise<number> {
+  async getTotalCount(): Promise<number> {
     return this.rideRepo.getRidesTotalCount();
   }
-  getRideById(id: number): Promise<RideModel> {
+  async getRideById(id: number): Promise<RideModel> {
     return this.rideRepo.getRideById(id);
   }
 
@@ -23,7 +23,3 @@ export class RideService {
     return this.rideRepo.insertRide(ride);
   }
 }
-
-// const rideRepo = new RideRepository();
-// const rideSevice = new RideService(rideRepo);
-// export default rideSevice;
