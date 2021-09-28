@@ -10,7 +10,8 @@
     "test": "nyc mocha -r ts-node/register 'tests/**/*.ts'",
     "start": "tsc && node build/src/index.js",
     "dev": "nodemon src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "test:load": "artillery run rides.yml"
   },
   "pre-push": {
     "colors": true,
